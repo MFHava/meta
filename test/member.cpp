@@ -4,7 +4,6 @@
 //    (See accompanying file ../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#include <iostream>
 #include <meta/members.hpp>
 
 struct test final {
@@ -65,5 +64,3 @@ namespace xyz {
 static_assert("a" == std::tuple_element_t<0, meta::members<xyz::test5<int>::inner<double>>>::name);
 static_assert("b" == std::tuple_element_t<1, meta::members<xyz::test5<int>::inner<double>>>::name);
 static_assert("c" == std::tuple_element_t<2, meta::members<xyz::test5<int>::inner<double>>>::name);
-
-int main() {}

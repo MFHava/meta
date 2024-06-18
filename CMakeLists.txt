@@ -34,7 +34,7 @@ add_library(meta INTERFACE)
 			/bigobj # use "big object files" to circumvent class of errors that are related to heavy template or machine generated code
 		)
 	endif()
-	target_compile_definitions(meta INTERFACE METADATA_MAX_AGGREGATE_MEMBERS=10)
+	target_compile_definitions(meta INTERFACE METADATA_MAX_AGGREGATE_MEMBERS=10 METADATA_MAX_ENUMERATOR_VALUE=10)
 	target_link_libraries(meta INTERFACE Boost::preprocessor)
 
 option(META_BUILD_TESTS "Build tests" OFF)
