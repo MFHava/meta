@@ -5,29 +5,22 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #pragma once
+#include <array>
 #include <ostream>
 #include <string_view>
 
 namespace meta {
 	template<std::size_t N>
-	struct fixed_string final {
-		char buffer[N];
-
+	struct fixed_string final : std::array<char, N> {
 		consteval
-		fixed_string(std::string_view sv) noexcept {
-			sv.copy(buffer, N);
-		}
-
-		//TODO: additional features?
+		fixed_string(std::string_view sv) noexcept { sv.copy(this->data(), N); }
 
 		constexpr
-		operator std::string_view() const noexcept { return {buffer, N}; }
+		operator std::string_view() const noexcept { return {this->data(), N}; }
 
 		friend
 		constexpr
-		auto operator==(const fixed_string & lhs, std::string_view rhs) noexcept -> bool {
-			return std::string_view{lhs} == rhs;
-		}
+		auto operator==(const fixed_string & lhs, std::string_view rhs) noexcept -> bool { return std::string_view{lhs} == rhs; }
 
 		friend
 		auto operator<<(std::ostream & os, const fixed_string & self) -> std::ostream & {
