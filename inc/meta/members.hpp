@@ -48,9 +48,15 @@ namespace meta::internal {
 		}
 	BOOST_PP_REPEAT_FROM_TO(1, BOOST_PP_ADD(METADATA_MAX_AGGREGATE_MEMBERS, 1), METADATA_INTERNAL_AS_TUPLE, _)
 	#undef METADATA_INTERNAL_AS_TUPLE
+
+	//overflow detection:
+	template<typename T>
+	concept BOOST_PP_CAT(aggregate_, BOOST_PP_ADD(METADATA_MAX_AGGREGATE_MEMBERS, 1)) = BOOST_PP_CAT(aggregate_, METADATA_MAX_AGGREGATE_MEMBERS)<T> and requires { T{ BOOST_PP_ENUM(BOOST_PP_ADD(METADATA_MAX_AGGREGATE_MEMBERS, 1), METADATA_INTERNAL_INIT, _) }; };
+	constexpr
+	auto as_tuple(BOOST_PP_CAT(aggregate_, BOOST_PP_ADD(METADATA_MAX_AGGREGATE_MEMBERS, 1)) auto &) noexcept =delete; //detected simple_aggregate with more members than supported
+
 	#undef METADATA_INTERNAL_BINDING
 	#undef METADATA_INTERNAL_INIT
-
 
 	template<auto P>
 	consteval
