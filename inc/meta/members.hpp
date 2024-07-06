@@ -17,10 +17,9 @@
 namespace meta::internal {
 	template<typename T>
 	struct any_base final { //used to check that T has no base...
-		operator T() =delete;
-
 		template<typename U>
-		operator U() requires std::is_base_of_v<U, T>;
+		requires(std::is_base_of_v<U, T> and not std::is_same_v<T, U>)
+		operator U();
 	};
 }
 
