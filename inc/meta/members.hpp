@@ -114,6 +114,8 @@ namespace meta {
 		constexpr
 		auto access(const T & self) noexcept -> decltype(auto) { return (std::get<Index>(internal::as_tuple(self))); }
 
+		using type = std::remove_cvref_t<decltype(access(internal::fake<T>))>;
+
 		inline
 		static
 		constexpr
