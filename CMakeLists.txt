@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.26)
 project(Meta)
 
-find_package(Boost REQUIRED COMPONENTS preprocessor)
+find_package(Boost REQUIRED COMPONENTS headers)
 
 add_library(meta INTERFACE)
 	target_compile_features(meta INTERFACE cxx_std_20)
@@ -35,10 +35,12 @@ add_library(meta INTERFACE)
 		)
 	endif()
 	target_compile_definitions(meta INTERFACE METADATA_MAX_AGGREGATE_MEMBERS=10 METADATA_MAX_ENUMERATOR_VALUE=10)
-	target_link_libraries(meta INTERFACE Boost::preprocessor)
+	target_link_libraries(meta INTERFACE Boost::headers)
 
 option(META_BUILD_TESTS "Build tests" OFF)
 if(META_BUILD_TESTS)
+	find_package(Catch2 3 REQUIRED)
+
 	add_executable(test-meta)
 		file(GLOB_RECURSE META CONFIGURE_DEPENDS "inc/*")
 			source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/inc FILES ${META})
@@ -46,7 +48,7 @@ if(META_BUILD_TESTS)
 		file(GLOB_RECURSE META CONFIGURE_DEPENDS "test/*")
 			source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/test FILES ${META})
 			target_sources(test-meta PRIVATE ${META})
-		target_link_libraries(test-meta PRIVATE meta)
+		target_link_libraries(test-meta PRIVATE meta Catch2::Catch2WithMain)
 endif()
 
 

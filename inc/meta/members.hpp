@@ -132,3 +132,40 @@ namespace meta {
 #ifdef __clang__
 	#pragma clang diagnostic pop
 #endif
+
+namespace meta {
+	//! @brief user-friendly API to iterate all members of an aggregate
+	inline
+	constexpr
+	class { //niebloid
+		constexpr
+		void do_(internal::aggregate_0 auto &, auto) const noexcept { /*nop*/ }
+
+		template<internal::aggregate_1 T>
+		constexpr
+		void do_(T & self, auto func) const {
+			using Members = members<std::decay_t<T>>;
+			constexpr auto Size{std::tuple_size_v<Members>};
+			using FirstMember = std::tuple_element_t<0, Members>;
+
+			if constexpr(requires { func(FirstMember{}, self); }) {
+				[&]<auto... I>(std::index_sequence<I...>) {
+					(func(std::tuple_element_t<I, Members>{}, self), ...);
+				}(std::make_index_sequence<Size>{});
+			} else {
+				static_assert(requires { func(FirstMember::access(self)); });
+				[&]<auto... I>(std::index_sequence<I...>) {
+					(func(std::tuple_element_t<I, Members>::access(self)), ...);
+				}(std::make_index_sequence<Size>{});
+			}
+		}
+	public:
+		template<simple_aggregate Self>
+		constexpr
+		void operator()(
+			Self & self, //!< [in] object to invoke @c func on for every member
+			auto func    //!< [in] must support either @c func(m) where @c m is a reference to a member of @c self or @c func(M, self) where @c M is @c member<Self, I>
+		) const { do_(self, func); }
+	} for_each_member;
+}
+

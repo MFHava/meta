@@ -11,4 +11,5 @@ Header-only C++ compile-time metadata library.
 Requirements
 ============
 Library depends on Boost.Preprocessor.
+Tests depend on Catch2.
 Documentation depends on Doxygen.

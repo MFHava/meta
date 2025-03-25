@@ -4,6 +4,7 @@
 //    (See accompanying file ../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+#include <catch2/catch_test_macros.hpp>
 #include <meta/members.hpp>
 
 struct test final {
@@ -64,3 +65,48 @@ namespace xyz {
 static_assert("a" == std::tuple_element_t<0, meta::members<xyz::test5<int>::inner<double>>>::name);
 static_assert("b" == std::tuple_element_t<1, meta::members<xyz::test5<int>::inner<double>>>::name);
 static_assert("c" == std::tuple_element_t<2, meta::members<xyz::test5<int>::inner<double>>>::name);
+
+
+TEST_CASE("for_each_member empty", "[members]") {
+	struct empty {};
+	empty e;
+
+	auto invoked{false};
+	meta::for_each_member(e, [&](auto &) { invoked = true; });
+	REQUIRE(!invoked);
+
+	meta::for_each_member(e, [&](auto, auto &) { invoked = true; });
+	REQUIRE(!invoked);
+
+	meta::for_each_member(e, [&]<typename M>(M, auto &) { invoked = true; });
+	REQUIRE(!invoked);
+}
+
+TEST_CASE("for_each_member const non-empty", "[members]") {
+	const test t{12, false, "hello"};
+
+	std::size_t count{0};
+	meta::for_each_member(t, [&](auto &) { ++count; });
+	REQUIRE(count == 3);
+
+	meta::for_each_member(t, [&](auto, auto &) { ++count; });
+	REQUIRE(count == 6);
+
+	meta::for_each_member(t, [&]<typename M>(M, auto &) { ++count; });
+	REQUIRE(count == 9);
+}
+
+TEST_CASE("for_each_member mutable non-empty", "[members]") {
+	test t{12, false, "hello"};
+
+	std::size_t count{0};
+	meta::for_each_member(t, [&](auto &) { ++count; });
+	REQUIRE(count == 3);
+
+	meta::for_each_member(t, [&](auto, auto &) { ++count; });
+	REQUIRE(count == 6);
+
+	meta::for_each_member(t, [&]<typename M>(M, auto &) { ++count; });
+	REQUIRE(count == 9);
+}
+
