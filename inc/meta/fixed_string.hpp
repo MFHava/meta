@@ -5,6 +5,7 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #pragma once
+#include <format>
 #include <ostream>
 #include <string_view>
 
@@ -27,6 +28,15 @@ namespace meta {
 		auto operator<<(std::ostream & os, const fixed_string & self) -> std::ostream & {
 			os << self.buffer;
 			return os;
+		}
+	};
+}
+
+namespace std {
+	template<size_t N>
+	struct formatter<meta::fixed_string<N>> : formatter<string_view> {
+		auto format(const meta::fixed_string<N> & s, auto & ctx) const {
+			return formatter<string_view>::format(string_view{s}, ctx);
 		}
 	};
 }
